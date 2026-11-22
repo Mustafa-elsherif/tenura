@@ -5,8 +5,10 @@
 # =============================================================
 
 from pyspark.sql import functions as F
-from pyspark.ml.feature import StringIndexer
-from pyspark.ml import Pipeline
+from hr_analytics.preprocessing import categorical_pipeline
+
+
+DERIVED_CATEGORIES = ["ExperienceLevel", "IncomeLevel"]
 
 
 def create_engagement_score(df):
@@ -141,22 +143,16 @@ def encode_new_features(df):
     Returns:
         Spark DataFrame with encoded new features
     """
-    indexers = [
-        StringIndexer(
-            inputCol="ExperienceLevel",
-            outputCol="ExperienceLevel_encoded",
-            handleInvalid="keep"
-        ),
-        StringIndexer(
-            inputCol="IncomeLevel",
-            outputCol="IncomeLevel_encoded",
-            handleInvalid="keep"
-        )
-    ]
-    pipeline = Pipeline(stages=indexers)
-    df = pipeline.fit(df).transform(df)
-    df = df.drop("ExperienceLevel", "IncomeLevel")
-    return df
+    pipeline = categorical_pipeline(DERIVED_CATEGORIES)
+    return pipeline.fit(df).transform(df).drop(*DERIVED_CATEGORIES)
+
+
+def add_features(df):
+    df = create_engagement_score(df)
+    df = create_satisfaction_score(df)
+    df = create_experience_level(df)
+    df = create_income_level(df)
+    return create_risk_score(df)
 
 
 def engineer_features(df):
@@ -172,17 +168,7 @@ def engineer_features(df):
     print("=" * 60)
     print("FEATURE ENGINEERING")
     print("=" * 60)
-    df = create_engagement_score(df)
-    print("EngagementScore created.")
-    df = create_satisfaction_score(df)
-    print("SatisfactionScore created.")
-    df = create_experience_level(df)
-    print("ExperienceLevel created.")
-    df = create_income_level(df)
-    print("IncomeLevel created.")
-    df = create_risk_score(df)
-    print("RiskScore created.")
-    df = encode_new_features(df)
+    df = encode_new_features(add_features(df))
     print("New features encoded.")
     print("=" * 60)
     print("FEATURE ENGINEERING COMPLETED SUCCESSFULLY")

@@ -7,6 +7,7 @@
 from pyspark.sql import functions as F
 import matplotlib.pyplot as plt
 import os
+from hr_analytics.clustering import CLUSTER_LABELS
 
 
 def identify_high_risk_employees(df_clustered):
@@ -46,7 +47,7 @@ def identify_high_risk_employees(df_clustered):
     return high_risk
 
 
-def plot_high_risk_analysis(df_clustered, high_risk):
+def plot_high_risk_analysis(df_clustered, high_risk, segments=None):
     """
     Plot high-risk employee analysis visualizations.
 
@@ -58,7 +59,7 @@ def plot_high_risk_analysis(df_clustered, high_risk):
     high_risk_pdf = high_risk.toPandas()
 
     colors = {0: "steelblue", 1: "tomato", 2: "seagreen"}
-    labels = {0: "Mid-Career Stable", 1: "Young High-Risk", 2: "Senior High-Income"}
+    labels = CLUSTER_LABELS if segments is None else {int(key): value for key, value in segments.items()}
 
     fig, axes = plt.subplots(1, 3, figsize=(18, 6))
 
@@ -191,7 +192,7 @@ def print_hr_recommendations():
         print("-" * 60)
 
 
-def generate_insights(df, df_clustered):
+def generate_insights(df, df_clustered, segments=None):
     """
     Run the full insights and recommendations pipeline.
 
@@ -207,7 +208,7 @@ def generate_insights(df, df_clustered):
     print("=" * 60)
 
     high_risk = identify_high_risk_employees(df_clustered)
-    plot_high_risk_analysis(df_clustered, high_risk)
+    plot_high_risk_analysis(df_clustered, high_risk, segments)
     analyze_risk_factors(df)
     print_hr_recommendations()
 

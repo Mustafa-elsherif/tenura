@@ -9,6 +9,20 @@ from pyspark.ml.feature import StringIndexer
 from pyspark.ml import Pipeline
 
 
+CATEGORICAL_COLS = [
+    "Attrition", "OverTime", "Gender", "BusinessTravel", "Department",
+    "EducationField", "JobRole", "MaritalStatus",
+]
+IRRELEVANT_COLS = ["EmployeeCount", "StandardHours", "Over18", "EmployeeNumber"]
+
+
+def categorical_pipeline(columns):
+    return Pipeline(stages=[
+        StringIndexer(inputCol=col, outputCol=f"{col}_encoded", handleInvalid="keep")
+        for col in columns
+    ])
+
+
 def check_missing_values(df):
     """
     Check for missing values in all columns.
@@ -69,13 +83,12 @@ def drop_irrelevant_columns(df):
     Returns:
         Spark DataFrame with irrelevant columns removed
     """
-    cols_to_drop = ["EmployeeCount", "StandardHours", "Over18", "EmployeeNumber"]
-    df = df.drop(*cols_to_drop)
+    df = df.drop(*IRRELEVANT_COLS)
 
     print("=" * 60)
     print("IRRELEVANT COLUMNS DROPPED")
     print("=" * 60)
-    print(f"Dropped Columns: {cols_to_drop}")
+    print(f"Dropped Columns: {IRRELEVANT_COLS}")
     print(f"Remaining Columns: {len(df.columns)}")
     return df
 
@@ -90,29 +103,13 @@ def encode_categorical_columns(df):
     Returns:
         Spark DataFrame with encoded categorical columns
     """
-    categorical_cols = [
-        "Attrition", "OverTime", "Gender",
-        "BusinessTravel", "Department",
-        "EducationField", "JobRole", "MaritalStatus"
-    ]
-
-    indexers = [
-        StringIndexer(
-            inputCol=col,
-            outputCol=col + "_encoded",
-            handleInvalid="keep"
-        )
-        for col in categorical_cols
-    ]
-
-    pipeline = Pipeline(stages=indexers)
-    df_encoded = pipeline.fit(df).transform(df)
-    df_clean = df_encoded.drop(*categorical_cols)
+    pipeline = categorical_pipeline(CATEGORICAL_COLS)
+    df_clean = pipeline.fit(df).transform(df).drop(*CATEGORICAL_COLS)
 
     print("=" * 60)
     print("CATEGORICAL ENCODING COMPLETED")
     print("=" * 60)
-    for col in categorical_cols:
+    for col in CATEGORICAL_COLS:
         print(f"  {col} → {col}_encoded")
     print(f"Final Columns: {len(df_clean.columns)}")
     return df_clean

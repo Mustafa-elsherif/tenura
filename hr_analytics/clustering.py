@@ -5,6 +5,7 @@
 #              Mahmoud Hesham - 240101375
 # =============================================================
 
+from pyspark.ml import Pipeline
 from pyspark.ml.feature import VectorAssembler, StandardScaler
 from pyspark.ml.clustering import KMeans
 from pyspark.ml.evaluation import ClusteringEvaluator
@@ -27,6 +28,14 @@ CLUSTER_LABELS = {
 }
 
 
+def clustering_preprocessing():
+    return Pipeline(stages=[
+        VectorAssembler(inputCols=CLUSTER_FEATURES, outputCol="features_raw"),
+        StandardScaler(inputCol="features_raw", outputCol="features_scaled",
+                       withStd=True, withMean=True),
+    ])
+
+
 def prepare_clustering_features(df):
     """
     Assemble and scale features for clustering.
@@ -37,20 +46,7 @@ def prepare_clustering_features(df):
     Returns:
         Scaled Spark DataFrame
     """
-    assembler = VectorAssembler(
-        inputCols=CLUSTER_FEATURES,
-        outputCol="features_raw"
-    )
-    df_assembled = assembler.transform(df)
-
-    scaler = StandardScaler(
-        inputCol="features_raw",
-        outputCol="features_scaled",
-        withStd=True,
-        withMean=True
-    )
-    df_scaled = scaler.fit(df_assembled).transform(df_assembled)
-    return df_scaled
+    return clustering_preprocessing().fit(df).transform(df)
 
 
 def find_optimal_clusters(df_scaled):
@@ -162,7 +158,7 @@ def analyze_clusters(df_clustered):
     cluster_analysis.show(truncate=False)
 
 
-def plot_cluster_visualization(df_clustered):
+def plot_cluster_visualization(df_clustered, segments=None):
     """
     Plot cluster visualization scatter plots.
 
@@ -175,7 +171,7 @@ def plot_cluster_visualization(df_clustered):
     ).toPandas()
 
     colors = {0: "steelblue", 1: "tomato", 2: "seagreen"}
-    labels = {0: "Mid-Career Stable", 1: "Young High-Risk", 2: "Senior High-Income"}
+    labels = CLUSTER_LABELS if segments is None else {int(key): value for key, value in segments.items()}
 
     fig, axes = plt.subplots(1, 3, figsize=(18, 6))
 

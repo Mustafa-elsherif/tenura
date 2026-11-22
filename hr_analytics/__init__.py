@@ -1,13 +1,25 @@
-# HR Analytics AI System
-# Modular Package
+"""Workforce Atlas analytics modules."""
 
-from hr_analytics.data_ingestion import load_data
-from hr_analytics.preprocessing import preprocess_data
-from hr_analytics.eda import run_eda
-from hr_analytics.feature_engineering import engineer_features
-from hr_analytics.models import train_models
-from hr_analytics.clustering import run_clustering
-from hr_analytics.insights import generate_insights
+from importlib import import_module
 
-__version__ = "1.0.0"
-__author__ = "Mustafa Nabil, Mahmoud Hesham, yousef hany , Omar Ahmed Wafik, Mohamed Nour"
+__version__ = "2.0.0"
+
+_EXPORTS = {
+    "load_data": "data_ingestion",
+    "preprocess_data": "preprocessing",
+    "run_eda": "eda",
+    "engineer_features": "feature_engineering",
+    "train_models": "models",
+    "run_clustering": "clustering",
+    "generate_insights": "insights",
+}
+
+__all__ = list(_EXPORTS)
+
+
+def __getattr__(name):
+    if name not in _EXPORTS:
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+    value = getattr(import_module(f".{_EXPORTS[name]}", __name__), name)
+    globals()[name] = value
+    return value

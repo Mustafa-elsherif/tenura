@@ -1,8 +1,4 @@
-pyspark==3.5.8
-pandas
-numpy
-matplotlib
-seaborn
-scikit-learn
-streamlit
-plotly
+pandas>=2.2,<3
+plotly>=6.3,<7
+pyarrow>=18,<25
+streamlit>=1.52,<2

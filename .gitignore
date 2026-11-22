@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+*.crc
+.venv/
+.tools/
+.artifacts/
+.playwright/
+.env
+.env.*
+.streamlit/secrets.toml

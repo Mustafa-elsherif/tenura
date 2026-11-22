@@ -31,6 +31,7 @@ FEATURE_COLS = [
     "MaritalStatus_encoded", "EngagementScore", "SatisfactionScore",
     "RiskScore", "ExperienceLevel_encoded", "IncomeLevel_encoded"
 ]
+PERFORMANCE_FEATURES = [col for col in FEATURE_COLS if col != "PerformanceRating"]
 
 
 def prepare_features(df):
@@ -182,10 +183,8 @@ def train_performance_model(df):
     Returns:
         tuple: (model, predictions)
     """
-    feature_cols_reg = [col for col in FEATURE_COLS if col != "PerformanceRating"]
-
     assembler_reg = VectorAssembler(
-        inputCols=feature_cols_reg,
+        inputCols=PERFORMANCE_FEATURES,
         outputCol="features_reg"
     )
     df_reg = assembler_reg.transform(df)

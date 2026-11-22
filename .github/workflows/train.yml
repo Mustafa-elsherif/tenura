@@ -1,0 +1,68 @@
+name: Build model release
+
+on:
+  push:
+    branches: [modernize/workforce-atlas]
+  workflow_dispatch:
+    inputs:
+      forest_source:
+        description: Forests to package
+        required: true
+        type: choice
+        default: train
+        options:
+          - train
+          - original
+      reports:
+        description: Include exploratory plots and intermediate Parquet data
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: workforce-model-training
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PYSPARK_SUBMIT_ARGS: '--master local[2] --conf spark.sql.shuffle.partitions=4 pyspark-shell'
+      SPARK_LOCAL_IP: '127.0.0.1'
+      MPLBACKEND: Agg
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: requirements*.txt
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: temurin
+      - run: python -m pip install -r requirements-training.txt
+      - name: Build and score the release
+        env:
+          FOREST_SOURCE: ${{ inputs.forest_source || 'original' }}
+          INCLUDE_REPORTS: ${{ inputs.reports }}
+        run: |
+          options=()
+          if [[ "$FOREST_SOURCE" == "original" ]]; then options+=(--reuse-original-forests); fi
+          if [[ "$INCLUDE_REPORTS" == "true" ]]; then options+=(--reports); fi
+          python main.py train --output "$RUNNER_TEMP/workforce-atlas.zip" "${options[@]}"
+          if [[ "$FOREST_SOURCE" == "original" ]]; then
+            python -m tests.check_prediction_parity "$RUNNER_TEMP/workforce-atlas.zip"
+          else
+            python main.py predict --data data/WA_Fn-UseC_-HR-Employee-Attrition.csv \
+              --release "$RUNNER_TEMP/workforce-atlas.zip" --output "$RUNNER_TEMP/predictions.csv"
+            python -c 'import pandas as pd, sys; df = pd.read_csv(sys.argv[1]); assert len(df) == 1470 and not df.isna().any().any()' "$RUNNER_TEMP/predictions.csv"
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: workforce-atlas-release
+          path: ${{ runner.temp }}/workforce-atlas.zip
+          if-no-files-found: error

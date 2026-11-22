@@ -1,103 +1,72 @@
-# =============================================================
-# HR Analytics AI System
-# Main Entry Point
-# =============================================================
-# Team Members:
-# - Mustafa Nabil       240103415  Model Development, Clustering, Dashboard
-# - Mahmoud Hesham      240101375  Model Development, Clustering, Dashboard
-# - Mariam Magdy        240102374  Exploratory Data Analysis
-# - Omar Ahmed Wafik    240101244  Preprocessing, Feature Engineering
-# - yousef hany         240102846  Data Ingestion, Insights
-# =============================================================
+"""Train and score Workforce Atlas models offline."""
 
+import argparse
+import logging
 import os
-from hr_analytics.data_ingestion import (
-    create_spark_session,
-    load_data,
-    explore_data,
-    save_as_parquet
-)
-from hr_analytics.preprocessing import preprocess_data
-from hr_analytics.eda import run_eda
-from hr_analytics.feature_engineering import engineer_features
-from hr_analytics.models import train_models
-from hr_analytics.clustering import run_clustering
-from hr_analytics.insights import generate_insights
+import sys
+from pathlib import Path
 
-# =============================================================
-# CONFIGURATION
-# =============================================================
-DATA_PATH = "data/WA_Fn-UseC_-HR-Employee-Attrition.csv"
-PARQUET_RAW = "data/hr_data.parquet"
-PARQUET_PREPROCESSED = "data/hr_data_preprocessed.parquet"
-PARQUET_ENGINEERED = "data/hr_data_engineered.parquet"
+from hr_analytics.release import DEMO_DATA, DEMO_RELEASE, LOCAL_RELEASE
 
 
 def main():
-    print("=" * 60)
-    print("HR ANALYTICS AI SYSTEM")
-    print("AI-Powered Employee Analytics and Decision Support")
-    print("=" * 60)
+    parser = argparse.ArgumentParser(description=__doc__)
+    commands = parser.add_subparsers(dest="command")
+    train_parser = commands.add_parser("train", help="Fit and package a new release")
+    train_parser.add_argument("--data", type=Path, default=DEMO_DATA)
+    train_parser.add_argument("--output", type=Path, default=LOCAL_RELEASE)
+    train_parser.add_argument("--reports", action="store_true", help="Include legacy Parquet and chart outputs")
+    train_parser.add_argument("--reuse-original-forests", action="store_true",
+                              help="Package the committed demo forests without refitting them")
+    predict_parser = commands.add_parser("predict", help="Score a CSV with a saved release")
+    predict_parser.add_argument("--data", type=Path, required=True)
+    predict_parser.add_argument("--release", type=Path)
+    predict_parser.add_argument("--output", type=Path, required=True)
+    args = parser.parse_args()
+    if args.command is None:
+        args = parser.parse_args(["train", "--reports"])
 
-    # Create outputs folder if not exists
-    os.makedirs("outputs", exist_ok=True)
-    os.makedirs("models", exist_ok=True)
+    os.environ.setdefault("MPLBACKEND", "Agg")
+    os.environ.setdefault("PYSPARK_PYTHON", sys.executable)
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+    from filelock import Timeout
+    from hr_analytics.data_ingestion import create_spark_session
+    from hr_analytics.workflow import predict, train
 
-    # Step 1: Data Ingestion
-    print("\nStep 1: Data Ingestion")
-    spark = create_spark_session()
-    df_raw = load_data(spark, DATA_PATH)
-    explore_data(df_raw)
-    save_as_parquet(df_raw, PARQUET_RAW)
+    data = args.data.resolve()
+    output = args.output.resolve()
+    if not data.is_file():
+        parser.error("The input CSV does not exist.")
+    if data == output:
+        parser.error("The output must differ from the input CSV.")
+    if args.command == "train" and output.suffix.lower() != ".zip":
+        parser.error("The release output must end in .zip.")
+    if args.command == "predict":
+        release = args.release or (LOCAL_RELEASE if LOCAL_RELEASE.is_file() else DEMO_RELEASE)
+        if output == release.resolve():
+            parser.error("The prediction output must differ from the release archive.")
 
-    # Step 2: Preprocessing
-    print("\nStep 2: Data Preprocessing")
-    df_preprocessed = preprocess_data(df_raw)
-    save_as_parquet(df_preprocessed, PARQUET_PREPROCESSED)
-
-    # Step 3: EDA
-    print("\nStep 3: Exploratory Data Analysis")
-    run_eda(df_preprocessed, df_raw)
-
-    # Step 4: Feature Engineering
-    print("\nStep 4: Feature Engineering")
-    df_engineered = engineer_features(df_preprocessed)
-    save_as_parquet(df_engineered, PARQUET_ENGINEERED)
-
-    # Step 5: Model Development
-    print("\nStep 5: Model Development")
-    attrition_model, performance_model, clf_metrics, reg_metrics = \
-        train_models(df_engineered)
-
-    # Step 6: Clustering
-    print("\nStep 6: Employee Segmentation")
-    clustering_model, df_clustered, silhouette = run_clustering(df_engineered)
-
-    # Step 7: Insights
-    print("\nStep 7: Insights and HR Recommendations")
-    high_risk = generate_insights(df_engineered, df_clustered)
-
-    # Final Summary
-    print("\n" + "=" * 60)
-    print("FINAL RESULTS SUMMARY")
-    print("=" * 60)
-    print(f"Attrition Model Accuracy:  {clf_metrics['accuracy']*100:.2f}%")
-    print(f"Attrition Model F1-Score:  {clf_metrics['f1']:.4f}")
-    print(f"Performance Model RMSE:    {reg_metrics['rmse']:.4f}")
-    print(f"Performance Model R2:      {reg_metrics['r2']:.4f}")
-    print(f"Clustering Silhouette:     {silhouette:.4f}")
-    print(f"High-Risk Employees:       {high_risk.count()}")
-    print("=" * 60)
-    print("HR Analytics AI System Completed Successfully.")
-    print("=" * 60)
+    spark = None
     try:
-        spark.stop()
+        spark = create_spark_session()
+        if args.command == "train":
+            train(spark, data, output, reuse_original=args.reuse_original_forests, reports=args.reports)
+        else:
+            predict(spark, data, release.resolve(), output)
+    except Timeout:
+        logging.error("A training job is already writing to this output directory.")
+        return 1
     except Exception:
-        pass
+        logging.exception("%s failed", args.command.capitalize())
+        return 1
+    finally:
+        if spark is not None:
+            try:
+                spark.stop()
+            except Exception:
+                logging.debug("Spark session does not support stop()", exc_info=True)
+    return 0
 
 
 if __name__ == "__main__":
-    main()
-
-
-
+    sys.exit(main())

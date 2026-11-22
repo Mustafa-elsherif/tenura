@@ -32,13 +32,15 @@ jobs:
       SPARK_LOCAL_IP: '127.0.0.1'
       MPLBACKEND: Agg
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7.1.0
         with:
           python-version: '3.12'
           cache: pip
           cache-dependency-path: requirements*.txt
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v6.3.0
         with:
           java-version: '17'
           distribution: temurin
@@ -59,7 +61,7 @@ jobs:
               --release "$RUNNER_TEMP/workforce-atlas.zip" --output "$RUNNER_TEMP/predictions.csv"
             python -c 'import pandas as pd, sys; df = pd.read_csv(sys.argv[1]); assert len(df) == 1470 and not df.isna().any().any()' "$RUNNER_TEMP/predictions.csv"
           fi
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7.0.2
         with:
           name: workforce-atlas-${{ inputs.forest_source }}
           path: ${{ runner.temp }}/workforce-atlas.zip

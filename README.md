@@ -2,6 +2,8 @@
 
 Workforce Atlas is an interactive people analytics dashboard built on IBM’s fictional employee attrition dataset. It helps readers explore which cohorts had higher observed attrition, how the K-means segments differ, and which records score highly under the project’s retention-risk rules.
 
+[Open the live dashboard](https://mustafa-elsherif.github.io/workforce-atlas/)
+
 The demo has 1,470 employee records, 237 observed departures, and 194 records that meet the default risk threshold of 0.60. See the source for field definitions and its published data license. [IBM HR Analytics Employee Attrition & Performance](https://www.kaggle.com/datasets/pavansubhasht/ibm-hr-analytics-attrition-dataset)
 
 ## Dashboard
@@ -27,9 +29,11 @@ Select a department in the sidebar to filter the workforce views. On a phone, op
 
 ## Run locally
 
-Python 3.12 is the tested runtime. Run these commands from the repository root.
+Python 3.12 is the tested runtime.
 
 ```bash
+git clone https://github.com/Mustafa-elsherif/workforce-atlas.git
+cd workforce-atlas
 python -m venv .venv
 # macOS / Linux
 source .venv/bin/activate

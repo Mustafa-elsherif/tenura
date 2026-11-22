@@ -1,8 +1,4 @@
-# =============================================================
-# HR Analytics AI System
-# Module 7: Insights and HR Recommendations
-# Responsible: yousef hany - 240102846
-# =============================================================
+"""Export retention-risk insights and proposed HR actions."""
 
 from pyspark.sql import functions as F
 import matplotlib.pyplot as plt

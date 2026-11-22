@@ -1,9 +1,4 @@
-# =============================================================
-# HR Analytics AI System
-# Module 5: Model Development
-# Responsible: Mustafa Nabil - 240103415
-#              Mahmoud Hesham - 240101375
-# =============================================================
+"""Fit and evaluate the attrition and performance forests."""
 
 from pyspark.sql import functions as F
 from pyspark.ml.feature import VectorAssembler

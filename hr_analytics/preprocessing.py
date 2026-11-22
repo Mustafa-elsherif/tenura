@@ -1,8 +1,4 @@
-# =============================================================
-# HR Analytics AI System
-# Module 2: Data Preprocessing
-# Responsible: Omar Ahmed Wafik - 240101244
-# =============================================================
+"""Inspect, clean, and encode workforce data with Spark."""
 
 from pyspark.sql import functions as F
 from pyspark.ml.feature import StringIndexer

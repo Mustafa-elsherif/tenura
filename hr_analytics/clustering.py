@@ -1,9 +1,4 @@
-# =============================================================
-# HR Analytics AI System
-# Module 6: Employee Segmentation using K-Means Clustering
-# Responsible: Mustafa Nabil - 240103415
-#              Mahmoud Hesham - 240101375
-# =============================================================
+"""Fit Spark K-means segments and generate clustering reports."""
 
 from pyspark.ml import Pipeline
 from pyspark.ml.feature import VectorAssembler, StandardScaler

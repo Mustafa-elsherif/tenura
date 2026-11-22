@@ -21,7 +21,8 @@ VIEWPORTS = {"desktop": (1440, 1080), "tablet": (820, 1180), "mobile": (390, 844
 def select_view(page, name):
     sidebar = page.get_by_test_id("stSidebar")
     radio = sidebar.get_by_text(name, exact=True)
-    if sidebar.count() == 0 or sidebar.get_attribute("data-collapsed") == "true":
+    if (sidebar.count() == 0 or sidebar.get_attribute("data-collapsed") == "true"
+            or sidebar.get_attribute("aria-expanded") == "false"):
         page.get_by_test_id("stExpandSidebarButton").click()
     radio.click()
     expect(page.get_by_role("heading", name=VIEWS[name], exact=True)).to_be_visible()

@@ -3,7 +3,7 @@ name: Dashboard checks and deployment
 on:
   pull_request:
   push:
-    branches: [main, modernize/workforce-atlas]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -28,7 +28,7 @@ jobs:
       - run: python -m unittest discover -s tests -p 'test_*.py' -v
       - run: python -m deployment.build_pages _site
       - uses: actions/upload-pages-artifact@v4
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         with:
           path: _site
 
@@ -54,7 +54,7 @@ jobs:
       - run: python -m tests.check_prediction_parity
 
   publish:
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     needs: [test-and-build, verify-models]
     runs-on: ubuntu-latest
     permissions:

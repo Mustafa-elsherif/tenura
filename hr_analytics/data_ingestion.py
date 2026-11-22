@@ -1,8 +1,4 @@
-# =============================================================
-# HR Analytics AI System
-# Module 1: Data Ingestion
-# Responsible: yousef hany - 240100780
-# =============================================================
+"""Load source data and write intermediate Spark Parquet tables."""
 
 from pyspark.sql import SparkSession
 from pyspark.sql import functions as F

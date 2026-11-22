@@ -1,8 +1,4 @@
-# =============================================================
-# HR Analytics AI System
-# Module 4: Feature Engineering
-# Responsible: Omar Ahmed Wafik - 240101244
-# =============================================================
+"""Derive engagement, satisfaction, income, experience, and risk features."""
 
 from pyspark.sql import functions as F
 from hr_analytics.preprocessing import categorical_pipeline

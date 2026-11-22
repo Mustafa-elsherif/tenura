@@ -1,8 +1,4 @@
-# =============================================================
-# HR Analytics AI System
-# Module 3: Exploratory Data Analysis
-# Responsible: Mariam Magdy - 240102374
-# =============================================================
+"""Generate exploratory charts from the workforce dataset."""
 
 from pyspark.sql import functions as F
 import matplotlib.pyplot as plt

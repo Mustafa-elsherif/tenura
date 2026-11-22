@@ -69,6 +69,8 @@ The app caches the decoded snapshot across sessions and invalidates it when the 
 
 Both forests use 100 trees with a maximum depth of 10. The shipped demo uses the original fitted forests. The reported supervised metrics are recalculated from the original engineered data using the seeded 80/20 evaluation split. The segmentation model was fitted offline on that same feature table. The pipeline retains the original engagement, satisfaction, experience, income, and risk features.
 
+On the 254-record evaluation split, the classifier had 88.98% accuracy and 0.8701 weighted F1. It identified 11 of 35 recorded departures. The regressor had an RMSE of 0.0208 and R² of 0.9964. The segmentation silhouette was 0.4052.
+
 Install the training dependencies in an environment with Java 17 and Python 3.12. Use Linux, WSL, or a compatible classic Spark environment for training and scoring. Native Windows model loading and Spark writes depend on Hadoop’s Windows native libraries.
 
 ```bash
@@ -122,4 +124,4 @@ python -m tests.check_browser http://localhost:8501
 
 ## Credits
 
-Original project contributors include Mustafa Nabil, Mahmoud Hesham, Mariam Magdy, Omar Ahmed Wafik, and Yousef Hany. The original implementation was developed as a university course project.
+Original project contributors include Mustafa Nabil, Mahmoud Hesham, Mariam Magdy, Omar Ahmed Wafik, and Yousef Hany. The original package metadata also credits Mohamed Nour.

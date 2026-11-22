@@ -1,0 +1,176 @@
+/* Layout and typography for the Streamlit shell. */
+[data-testid="stAppViewContainer"] {
+    background: #f5f7f5;
+}
+
+[data-testid="stMainBlockContainer"] {
+    max-width: 86rem;
+    padding: 4.65rem clamp(1rem, 3vw, 3.3rem) 3rem;
+}
+
+[data-testid="stHeader"] {
+    background: #f5f7f5ec;
+    height: 3rem;
+}
+[data-testid="stSidebar"] {
+    border-right: 1px solid #234537;
+}
+[data-testid="stSidebar"] [data-testid="stSidebarContent"] {
+    background: #10281f;
+}
+[data-testid="stSidebar"] [data-testid="stSidebarUserContent"] {
+    padding: 2rem 1rem 1.4rem;
+}
+[data-testid="stSidebar"] hr {
+    border-color: #3d594e;
+    margin: 0.7rem 0 0.4rem;
+}
+.wa-brand {
+    display: flex;
+    gap: .72rem;
+    align-items: center;
+    margin: .35rem 0 .9rem;
+}
+.wa-brand-mark {
+    background: #a5ebce;
+    color: #133727;
+    border-radius: .75rem;
+    width: 2.55rem;
+    height: 2.55rem;
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    letter-spacing: -.05em;
+    flex: 0 0 auto;
+}
+.wa-brand strong {
+    display: block;
+    color: #f3f8f4;
+    font-size: 1.07rem;
+    letter-spacing: -.023em;
+}
+.wa-brand small {
+    color: #abc9b9;
+    display: block;
+    font-size: .79rem;
+}
+[data-testid="stSidebar"] [role="radiogroup"] {
+    gap: .25rem;
+}
+[data-testid="stSidebar"] [role="radiogroup"] label {
+    width: 100%;
+    padding: .42rem .52rem;
+    border-radius: .5rem;
+    margin: 0;
+}
+[data-testid="stSidebar"] [role="radiogroup"] label:has(input:checked) {
+    background: #244838;
+}
+[data-testid="stSidebar"] [role="radiogroup"] label:hover {
+    background: #2a4d3f;
+}
+[data-testid="stSidebar"] [data-testid="stCaptionContainer"] {
+    color: #c2d7ca;
+}
+
+.wa-hero {
+    padding: clamp(1.3rem, 4vw, 2.9rem);
+    border-radius: 1.15rem;
+    background: linear-gradient(110deg, #102d22, #124a37 72%, #185b45);
+    color: #e0efe7;
+    margin-bottom: .45rem;
+}
+.wa-hero h1 {
+    font-size: clamp(1.9rem, 4.2vw, 3.55rem);
+    font-weight: 750;
+    letter-spacing: -.053em;
+    color: #f7fcf8;
+    line-height: 1.08;
+    padding: 0;
+    margin: 0 0 .7rem;
+}
+.wa-hero p {
+    color: #d4e9dc;
+    max-width: 46rem;
+    font-size: clamp(.95rem, 1.3vw, 1.1rem);
+    line-height: 1.55;
+    margin: 0;
+}
+.wa-source {
+    display: block;
+    color: #a9e8cb;
+    font-size: .79rem;
+    margin-bottom: .75rem;
+    letter-spacing: .065em;
+    font-weight: 650;
+    text-transform: uppercase;
+}
+
+[data-testid="stMain"] [class*="st-key-wa-card-"] {
+    background: #fff;
+    min-width: 0;
+    border-color: #dce6df !important;
+    border-radius: .95rem;
+    padding: clamp(.75rem, 1.7vw, 1.22rem);
+}
+[data-testid="stMetric"] {
+    padding: .92rem 1rem;
+    background: #fff;
+    border: 1px solid #dce6df;
+    border-radius: .85rem;
+}
+[data-testid="stMetricLabel"] p {
+    color: #4f6258;
+    font-size: .86rem;
+    white-space: normal;
+}
+[data-testid="stMetricValue"] {
+    color: #153d2d;
+    font-weight: 720;
+    font-size: clamp(1.55rem, 2.5vw, 2.35rem);
+    letter-spacing: -.045em;
+}
+[data-testid="stMain"] h2 {
+    font-size: clamp(1.3rem, 2vw, 1.7rem);
+    letter-spacing: -.032em;
+    padding-top: .7rem;
+}
+[data-testid="stMain"] h3 {
+    font-size: 1.03rem;
+    letter-spacing: -.02em;
+    padding-top: 0;
+    padding-bottom: .15rem;
+}
+[data-testid="stMain"] [data-testid="stCaptionContainer"] p {
+    color: #516358;
+}
+[data-testid="stPlotlyChart"] {
+    min-width: 0;
+}
+
+@media (max-width: 1100px) {
+    [data-testid="stMain"] [data-testid="stHorizontalBlock"]:has(> div [data-testid="stMetric"]) {
+        flex-wrap: wrap;
+    }
+    [data-testid="stMain"] [data-testid="stHorizontalBlock"]:has(> div [data-testid="stMetric"]) > [data-testid="stColumn"] {
+        flex: 1 1 calc(50% - .55rem);
+        min-width: calc(50% - .55rem);
+    }
+}
+@media (max-width: 850px) {
+    [data-testid="stMainBlockContainer"] {
+        padding-top: 4.15rem;
+    }
+    [data-testid="stMain"] [data-testid="stHorizontalBlock"]:not(:has(> div [data-testid="stMetric"])) {
+        flex-wrap: wrap;
+    }
+    [data-testid="stMain"] [data-testid="stHorizontalBlock"]:not(:has(> div [data-testid="stMetric"])) > [data-testid="stColumn"] {
+        flex: 1 1 100%;
+        min-width: 0;
+    }
+}
+@media (max-width: 400px) {
+    [data-testid="stMetric"] {
+        padding: .7rem;
+    }
+}

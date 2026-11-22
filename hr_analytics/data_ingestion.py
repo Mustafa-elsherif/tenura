@@ -14,7 +14,7 @@ def create_spark_session():
     spark = SparkSession.getActiveSession()
     if spark is None:
         spark = SparkSession.builder \
-            .appName("HR Analytics AI System") \
+            .appName("Workforce Atlas") \
             .config("spark.sql.legacy.timeParserPolicy", "LEGACY") \
             .getOrCreate()
     try:

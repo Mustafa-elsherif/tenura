@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Explore attrition, workforce segments, and retention risk in the IBM HR demo dataset.">
+    <title>Workforce Atlas</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@stlite/browser@1.12.3/build/stlite.css">
+    <style>
+        body { margin: 0; background: #f5f7f5; }
+        #loading { padding: 2rem; color: #17392b; font: 1rem system-ui, sans-serif; }
+        #dashboard:has([data-testid="stAppViewContainer"]) + #loading { display: none; }
+    </style>
+</head>
+<body>
+    <div id="dashboard"></div>
+    <p id="loading" role="status">Loading Workforce Atlas…</p>
+    <script type="module" src="./load.js"></script>
+</body>
+</html>

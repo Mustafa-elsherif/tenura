@@ -144,7 +144,7 @@ def analyze_risk_factors(df):
     ).orderBy("IncomeGroup").show()
 
 
-def print_hr_recommendations():
+def print_hr_recommendations(high_risk_count=None):
     """
     Print strategic HR recommendations.
     """
@@ -152,6 +152,9 @@ def print_hr_recommendations():
     print("STRATEGIC HR RECOMMENDATIONS")
     print("=" * 60)
 
+    monitor_action = "Review employees identified by the high-risk threshold"
+    if high_risk_count is not None:
+        monitor_action = f"Review the {high_risk_count:,} records at or above the high-risk threshold"
     recommendations = {
         "1. Overtime Policy Reform": [
             "Cap overtime hours to a maximum of 10 hours per week",
@@ -178,7 +181,7 @@ def print_hr_recommendations():
             "Establish open-door communication policies with management"
         ],
         "5. High-Risk Employee Monitoring": [
-            "Immediately flag and monitor all 194 identified high-risk employees",
+            monitor_action,
             "Schedule monthly check-ins with high-risk employees",
             "Offer personalized retention packages for critical cases",
             "Track risk score changes monthly and update intervention plans"
@@ -210,7 +213,7 @@ def generate_insights(df, df_clustered, segments=None):
     high_risk = identify_high_risk_employees(df_clustered)
     plot_high_risk_analysis(df_clustered, high_risk, segments)
     analyze_risk_factors(df)
-    print_hr_recommendations()
+    print_hr_recommendations(high_risk.count())
 
     print("=" * 60)
     print("INSIGHTS COMPLETED SUCCESSFULLY")

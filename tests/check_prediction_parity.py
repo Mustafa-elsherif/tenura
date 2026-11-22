@@ -21,13 +21,13 @@ from hr_analytics.workflow import predict, regression_features
 def main():
     spark = create_spark_session()
     try:
-        source = load_data(spark, DEMO_DATA.as_uri())
+        source = load_data(spark, DEMO_DATA.as_posix())
         original = engineer_features(encode_categorical_columns(source))
-        classifier = RandomForestClassificationModel.load((ROOT / "models/attrition_model").as_uri())
-        regressor = RandomForestRegressionModel.load((ROOT / "models/performance_model").as_uri())
+        classifier = RandomForestClassificationModel.load((ROOT / "models/attrition_model").as_posix())
+        regressor = RandomForestRegressionModel.load((ROOT / "models/performance_model").as_posix())
         classification = classifier.transform(prepare_features(original)).select(
             "EmployeeNumber", F.when(F.col("prediction") == 1, "Yes").otherwise("No").alias("PredictedAttrition"),
-            vector_to_array("probability")[1].alias("AttritionVoteShare"), "RiskScore",
+            vector_to_array("probability")[1].alias("AttritionModelScore"), "RiskScore",
         )
         regression = regressor.transform(regression_features(original)).select(
             "EmployeeNumber", F.col("prediction").alias("PredictedPerformance"),

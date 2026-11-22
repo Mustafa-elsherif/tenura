@@ -1,6 +1,5 @@
 """Explicit Spark training and inference for Workforce Atlas releases."""
 
-import hashlib
 import json
 import os
 import tempfile
@@ -30,7 +29,7 @@ from hr_analytics.models import (
 )
 from hr_analytics.preprocessing import CATEGORICAL_COLS, IRRELEVANT_COLS, categorical_pipeline
 from hr_analytics.release import (
-    DEMO_SHA256, FORMAT_VERSION, ROOT, SNAPSHOT_COLUMNS, read_metadata, read_snapshot,
+    DEMO_SHA256, FORMAT_VERSION, ROOT, SNAPSHOT_COLUMNS, csv_digest, read_metadata, read_snapshot,
 )
 
 RAW_INPUTS = [col for col in CATEGORICAL_COLS if col != "Attrition"]
@@ -39,11 +38,6 @@ NUMERIC_INPUTS = [
     if not col.endswith("_encoded") and col not in {"EngagementScore", "SatisfactionScore", "RiskScore"}
 ]
 SEGMENT_NAMES = ["Young High-Risk", "Mid-Career Stable", "Senior High-Income"]
-
-
-def file_digest(path):
-    with path.open("rb") as source:
-        return hashlib.file_digest(source, "sha256").hexdigest()
 
 
 def binary_indexer(column):
@@ -136,7 +130,7 @@ def score(engineered, pipeline):
 
 
 def build_release(spark, source, directory, reuse_original, reports):
-    fingerprint = file_digest(source)
+    fingerprint = csv_digest(source)
     if reuse_original and fingerprint != DEMO_SHA256:
         raise ValueError("The original forests can only be packaged using the original IBM demo CSV.")
     print("1/5  Reading and preparing the training data", flush=True)

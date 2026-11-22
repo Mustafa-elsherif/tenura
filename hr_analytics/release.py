@@ -1,5 +1,6 @@
 """Portable release format shared by the dashboard, trainer, and scorer."""
 
+import hashlib
 import json
 from pathlib import Path
 from zipfile import ZipFile
@@ -10,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DEMO_RELEASE = ROOT / "artifacts" / "demo.zip"
 LOCAL_RELEASE = ROOT / ".artifacts" / "workforce-atlas.zip"
 DEMO_DATA = ROOT / "data" / "WA_Fn-UseC_-HR-Employee-Attrition.csv"
-DEMO_SHA256 = "a5c31e38bd7fafc9bc333884eb181b06b41b8e5e488e8f7ccb27199fb3be7659"
+DEMO_SHA256 = "e9f55fbf0a5c058306225d131311e135379d82ad0c94c33738ec75b9a179db9c"
 FORMAT_VERSION = 1
 RISK_THRESHOLD = 0.6
 SNAPSHOT_COLUMNS = [
@@ -18,6 +19,15 @@ SNAPSHOT_COLUMNS = [
     "JobLevel", "TotalWorkingYears", "YearsAtCompany", "EngagementScore",
     "SatisfactionScore", "RiskScore", "cluster",
 ]
+
+
+def csv_digest(path):
+    """Hash CSV content consistently across Windows and Unix Git checkouts."""
+    digest = hashlib.sha256()
+    with path.open("rb") as source:
+        for line in source:
+            digest.update(line.replace(b"\r\n", b"\n"))
+    return digest.hexdigest()
 
 
 def read_metadata(archive):

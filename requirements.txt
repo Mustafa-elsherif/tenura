@@ -1,4 +1,7 @@
-pandas>=2.2,<3
-plotly>=6.3,<7
-pyarrow>=18,<25
-streamlit>=1.52,<2
+# Training pipeline (ml/train.py). The API has its own backend/requirements.txt.
+pandas==3.1.0
+numpy==2.5.4
+scikit-learn==1.9.1
+xgboost==3.4.1
+shap==0.54.1
+joblib==1.6.0

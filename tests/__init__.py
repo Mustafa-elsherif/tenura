@@ -1,1 +1,0 @@
-"""Workforce Atlas regression checks."""

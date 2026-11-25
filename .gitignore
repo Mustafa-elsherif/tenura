@@ -1,11 +1,24 @@
+# Python
 __pycache__/
 *.py[cod]
-*.crc
 .venv/
-.tools/
-.artifacts/
-.playwright/
+.pytest_cache/
+*.egg-info/
+
+# Node / frontend
+node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Env & secrets
 .env
 .env.*
-.streamlit/secrets.toml
-outputs/workforce-atlas-template/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build scratch
+.tools/
+.artifacts/
+wa-build.log

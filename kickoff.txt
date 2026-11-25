@@ -1,0 +1,21 @@
+Read CLAUDE.md and BUILD_SPEC.md in this folder first, then execute the entire build end to end, fully autonomously, without stopping to ask me anything — I am asleep and will not answer.
+
+Mission: rebuild the `workforce-atlas` repository into a real, production-grade, end-to-end AI platform a freelance client would pay for — "Workforce Atlas: employee attrition & workforce-risk intelligence." A trained ML model, a FastAPI backend usable as an API, a modern glassmorphism dashboard (match the reference image in docs/), Docker, tests, great docs, and a live deployment.
+
+Hard rules (from CLAUDE.md — obey exactly):
+- Every commit is authored by my existing git identity. NEVER add any Co-Authored-By, "Claude", "Anthropic", "Generated with", or session/trailer line to any commit message or PR body. Short, professional, first-person messages only.
+- Zero AI slop: no lorem, no templated filler, no fake metrics. Every number is computed from real data or clearly labelled as a demo sample. One coherent, world-class, accessible, responsive design system.
+- The end user never waits for training: train once, serialize artifacts, and have the API and dashboard load pre-computed artifacts at startup.
+- Clean repo: delete all legacy/unused content; keep only the final integrated platform (keep .git history).
+- Finish LIVE: the dashboard must end deployed at a public URL and fully usable.
+
+Execution:
+- Follow BUILD_SPEC.md phase by phase. You may change algorithms, features, or data to reach the best honest result.
+- Use the frontend-design skill and the data:build-dashboard skill for the dashboard.
+- Commit after each phase and push to origin main.
+- If a step needs my login (e.g. hosting the backend), do everything else possible, record the single remaining step in DEPLOYMENT.md, and keep going — never stall.
+- Work efficiently and conserve tokens: no long explanations, steady pace, just build.
+
+When finished, write the live URL and the repo URL into DEPLOYMENT.md and print them.
+
+Naming (important): "Workforce Atlas" and "workforce-atlas" are placeholders. Choose a strong, professional, modern, trendy product name that genuinely fits this platform (employee attrition & workforce-risk intelligence). Use that name consistently EVERYWHERE — the product name shown in the dashboard UI, the README title, all docs, and the deployment. Rename the GitHub repository to match using the authenticated gh CLI (gh repo rename <new-name>), and update the git remote accordingly. Do not keep a generic or placeholder name anywhere.

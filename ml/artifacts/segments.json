@@ -1,0 +1,147 @@
+{
+  "by_department": [
+    {
+      "name": "Sales",
+      "headcount": 446,
+      "avg_risk": 0.1769,
+      "high_risk": 81,
+      "actual_attrition": 0.2063
+    },
+    {
+      "name": "Research & Development",
+      "headcount": 961,
+      "avg_risk": 0.1264,
+      "high_risk": 104,
+      "actual_attrition": 0.1384
+    },
+    {
+      "name": "Human Resources",
+      "headcount": 63,
+      "avg_risk": 0.1258,
+      "high_risk": 7,
+      "actual_attrition": 0.1905
+    }
+  ],
+  "by_job_role": [
+    {
+      "name": "Sales Representative",
+      "headcount": 83,
+      "avg_risk": 0.3384,
+      "high_risk": 32,
+      "actual_attrition": 0.3976
+    },
+    {
+      "name": "Laboratory Technician",
+      "headcount": 259,
+      "avg_risk": 0.2104,
+      "high_risk": 60,
+      "actual_attrition": 0.2394
+    },
+    {
+      "name": "Sales Executive",
+      "headcount": 326,
+      "avg_risk": 0.1472,
+      "high_risk": 48,
+      "actual_attrition": 0.1748
+    },
+    {
+      "name": "Human Resources",
+      "headcount": 52,
+      "avg_risk": 0.1426,
+      "high_risk": 7,
+      "actual_attrition": 0.2308
+    },
+    {
+      "name": "Research Scientist",
+      "headcount": 292,
+      "avg_risk": 0.1317,
+      "high_risk": 33,
+      "actual_attrition": 0.161
+    },
+    {
+      "name": "Manufacturing Director",
+      "headcount": 145,
+      "avg_risk": 0.0792,
+      "high_risk": 3,
+      "actual_attrition": 0.069
+    },
+    {
+      "name": "Healthcare Representative",
+      "headcount": 131,
+      "avg_risk": 0.0772,
+      "high_risk": 6,
+      "actual_attrition": 0.0687
+    },
+    {
+      "name": "Manager",
+      "headcount": 102,
+      "avg_risk": 0.0652,
+      "high_risk": 2,
+      "actual_attrition": 0.049
+    },
+    {
+      "name": "Research Director",
+      "headcount": 80,
+      "avg_risk": 0.0457,
+      "high_risk": 1,
+      "actual_attrition": 0.025
+    }
+  ],
+  "by_band": [
+    {
+      "name": "Critical",
+      "headcount": 42
+    },
+    {
+      "name": "High",
+      "headcount": 150
+    },
+    {
+      "name": "Moderate",
+      "headcount": 216
+    },
+    {
+      "name": "Low",
+      "headcount": 1062
+    }
+  ],
+  "by_overtime": [
+    {
+      "name": "No",
+      "headcount": 1054,
+      "avg_risk": 0.1014,
+      "high_risk": 70,
+      "actual_attrition": 0.1044
+    },
+    {
+      "name": "Yes",
+      "headcount": 416,
+      "avg_risk": 0.2439,
+      "high_risk": 122,
+      "actual_attrition": 0.3053
+    }
+  ],
+  "by_business_travel": [
+    {
+      "name": "Non-Travel",
+      "headcount": 150,
+      "avg_risk": 0.0704,
+      "high_risk": 8,
+      "actual_attrition": 0.08
+    },
+    {
+      "name": "Travel_Frequently",
+      "headcount": 277,
+      "avg_risk": 0.1869,
+      "high_risk": 50,
+      "actual_attrition": 0.2491
+    },
+    {
+      "name": "Travel_Rarely",
+      "headcount": 1043,
+      "avg_risk": 0.14,
+      "high_risk": 134,
+      "actual_attrition": 0.1496
+    }
+  ]
+}

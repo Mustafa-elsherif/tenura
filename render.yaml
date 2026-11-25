@@ -1,0 +1,15 @@
+# One-command backend deploy to Render (https://render.com).
+# From the Render dashboard: New + > Blueprint > point at this repo. Render reads
+# this file and builds the API container. No code changes needed.
+services:
+  - type: web
+    name: tenura-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: .
+    plan: free
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PORT
+        value: 8000

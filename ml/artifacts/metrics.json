@@ -48,7 +48,7 @@
     "brier": 0.1021
   },
   "calibration": "isotonic (prefit on validation split)",
-  "trained_at": "2026-11-25T18:46:59Z",
+  "trained_at": "2026-11-25T18:49:51Z",
   "overview": {
     "headcount": 1470,
     "attrition_rate": 0.1612,

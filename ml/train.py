@@ -369,6 +369,66 @@ def main() -> None:
         "overview": overview,
     }
 
+    # Client-side model export: lets the live demo run the real what-if model
+    # in the browser (no backend needed). Only emitted for the linear model.
+    client_model = None
+    if model_type == "linear":
+        scaler = pre.named_transformers_["num"].named_steps["scale"]
+        onehot = pre.named_transformers_["cat"].named_steps["onehot"]
+        coef = base.coef_[0]
+        bg = X_train_t.mean(axis=0)
+        n_num = len(NUMERIC_FEATURES)
+
+        categorical = []
+        col = n_num
+        for k, cat_feature in enumerate(CATEGORICAL):
+            cats = [str(c) for c in onehot.categories_[k]]
+            width = len(cats)
+            categorical.append(
+                {
+                    "feature": cat_feature,
+                    "categories": cats,
+                    "coef": [float(c) for c in coef[col : col + width]],
+                    "bg": [float(b) for b in bg[col : col + width]],
+                }
+            )
+            col += width
+
+        # Isotonic calibration curve (raw proba -> calibrated proba).
+        cc = calibrated.calibrated_classifiers_[0]
+        iso = cc.calibrators[0]
+        calib = {
+            "x": [float(v) for v in iso.X_thresholds_],
+            "y": [float(v) for v in iso.y_thresholds_],
+        }
+
+        client_model = {
+            "numeric_features": NUMERIC_FEATURES,
+            "raw_numeric": [c for c in NUMERIC_FEATURES if c not in {
+                "TenureRatio", "IncomePerLevel", "PromotionStagnation", "ManagerStability",
+                "AgeAtJoining", "SatisfactionIndex", "IncomePerYearWorked", "RoleTenureShare"}],
+            "scaler_mean": [float(m) for m in scaler.mean_],
+            "scaler_scale": [float(s) for s in scaler.scale_],
+            "numeric_coef": [float(c) for c in coef[:n_num]],
+            "numeric_bg": [float(b) for b in bg[:n_num]],
+            "categorical": categorical,
+            "intercept": float(base.intercept_[0]),
+            "calibration": calib,
+            "bands": {"Critical": 0.60, "High": 0.35, "Moderate": 0.15},
+            "defaults": {
+                "Age": 36, "DailyRate": 802, "DistanceFromHome": 7, "Education": 3,
+                "EnvironmentSatisfaction": 3, "HourlyRate": 66, "JobInvolvement": 3,
+                "JobLevel": 2, "JobSatisfaction": 3, "MonthlyIncome": 4919, "MonthlyRate": 14235,
+                "NumCompaniesWorked": 2, "PercentSalaryHike": 14, "PerformanceRating": 3,
+                "RelationshipSatisfaction": 3, "StockOptionLevel": 1, "TotalWorkingYears": 10,
+                "TrainingTimesLastYear": 3, "WorkLifeBalance": 3, "YearsAtCompany": 5,
+                "YearsInCurrentRole": 3, "YearsSinceLastPromotion": 1, "YearsWithCurrManager": 3,
+                "BusinessTravel": "Travel_Rarely", "Department": "Research & Development",
+                "EducationField": "Life Sciences", "Gender": "Male",
+                "JobRole": "Research Scientist", "MaritalStatus": "Married", "OverTime": "No",
+            },
+        }
+
     # Serialize artifacts.
     joblib.dump(serving, ARTIFACTS / "model.joblib")
     explainer_bundle = {
@@ -384,6 +444,8 @@ def main() -> None:
     (ARTIFACTS / "feature_importance.json").write_text(json.dumps(feature_importance, indent=2))
     (ARTIFACTS / "scored_employees.json").write_text(json.dumps(scored))
     (ARTIFACTS / "segments.json").write_text(json.dumps(segments, indent=2))
+    if client_model is not None:
+        (ARTIFACTS / "client_model.json").write_text(json.dumps(client_model))
 
     print(f"Artifacts written to {ARTIFACTS} in {time.time() - t0:.1f}s")
     print(json.dumps(overview, indent=2))

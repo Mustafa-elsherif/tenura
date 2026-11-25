@@ -1,0 +1,92 @@
+[
+  {
+    "feature": "OverTime",
+    "label": "Works overtime",
+    "importance": 0.67184
+  },
+  {
+    "feature": "NumCompaniesWorked",
+    "label": "Number of prior employers",
+    "importance": 0.40622
+  },
+  {
+    "feature": "JobRole",
+    "label": "Job role",
+    "importance": 0.38533
+  },
+  {
+    "feature": "RoleTenureShare",
+    "label": "Time settled in current role",
+    "importance": 0.37462
+  },
+  {
+    "feature": "YearsWithCurrManager",
+    "label": "Years with current manager",
+    "importance": 0.35356
+  },
+  {
+    "feature": "MaritalStatus",
+    "label": "Marital status",
+    "importance": 0.33884
+  },
+  {
+    "feature": "YearsSinceLastPromotion",
+    "label": "Years since last promotion",
+    "importance": 0.30062
+  },
+  {
+    "feature": "DistanceFromHome",
+    "label": "Commute distance",
+    "importance": 0.28113
+  },
+  {
+    "feature": "BusinessTravel",
+    "label": "Business travel",
+    "importance": 0.27866
+  },
+  {
+    "feature": "IncomePerYearWorked",
+    "label": "Pay per year of experience",
+    "importance": 0.26961
+  },
+  {
+    "feature": "JobInvolvement",
+    "label": "Job involvement",
+    "importance": 0.26798
+  },
+  {
+    "feature": "SatisfactionIndex",
+    "label": "Overall satisfaction",
+    "importance": 0.25595
+  },
+  {
+    "feature": "EnvironmentSatisfaction",
+    "label": "Environment satisfaction",
+    "importance": 0.2376
+  },
+  {
+    "feature": "JobLevel",
+    "label": "Job level",
+    "importance": 0.21654
+  },
+  {
+    "feature": "Department",
+    "label": "Department",
+    "importance": 0.20957
+  },
+  {
+    "feature": "YearsInCurrentRole",
+    "label": "Years in current role",
+    "importance": 0.18443
+  },
+  {
+    "feature": "EducationField",
+    "label": "Field of study",
+    "importance": 0.18027
+  },
+  {
+    "feature": "IncomePerLevel",
+    "label": "Pay for job level",
+    "importance": 0.18016
+  }
+]

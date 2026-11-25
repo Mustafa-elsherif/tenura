@@ -15,7 +15,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install backend deps
-        run: pip install -r backend/requirements.txt
+        run: pip install -r backend/requirements-dev.txt
       - name: Run API tests
         working-directory: backend
         run: python -m pytest -q

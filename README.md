@@ -42,9 +42,14 @@ Every number in the product is computed from that data — nothing is mocked.
 - **Bilingual, RTL-ready.** Full **English** and **Arabic** UI with right-to-left
   layout and a one-click language switch — every string is translated, nothing is
   hard-coded.
-- **Responsive to the phone.** A single, deliberate design system that holds from
-  320px up: compact KPI grids, a wrapping toolbar, and data tables that reflow into
-  readable cards on small screens — no clipped columns, no horizontal scroll.
+- **A deliberate visual identity.** Not a generic dark SaaS kit: a calm, editorial
+  instrument — ink on cool "document" paper, structured with hairlines and whitespace,
+  with a serif voice for headings and the workforce laid out as a single risk spectrum.
+  Colour is reserved for one thing — the risk tier (Low → Critical). Dark mode is a
+  deep neutral control-room tone, not purple.
+- **Responsive to the phone.** The same system holds from 320px up: the stat band and
+  charts reflow, the toolbar wraps, and the employee register becomes labelled cards on
+  small screens — no clipped columns, no horizontal scroll.
 - **Works live with or without a server.** The dashboard ships with the scored
   dataset bundled and a faithful in-browser replica of the model, so the public demo
   is fully interactive. Point it at the FastAPI backend and it switches to live calls.

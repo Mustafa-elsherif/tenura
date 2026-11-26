@@ -26,9 +26,10 @@ export default function Drivers() {
           <Card title={t("drv.perf")} note={t("drv.perf.note", { model: m.selected_model, n: tt.n })}>
             <div className="grid" style={{ gridTemplateColumns: "1fr 1fr", gap: 14 }}>
               {metricTiles.map((x) => (
-                <div key={x.label} className="metric-mini" style={{ padding: "12px 14px", background: "var(--brand-050)", borderRadius: 12 }}>
+                <div key={x.label} className="metric-mini" style={{ padding: "13px 15px", background: "var(--surface-2)", borderRadius: "var(--radius-sm)" }}>
                   <b style={{ fontSize: 22 }}>{x.value}</b>
-                  <span>{x.label} · {x.hint}</span>
+                  <span style={{ fontWeight: 600, color: "var(--ink-2)", fontFamily: "var(--font)" }}>{x.label}</span>
+                  <span>{x.hint}</span>
                 </div>
               ))}
             </div>

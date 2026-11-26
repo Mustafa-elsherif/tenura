@@ -56,9 +56,11 @@ export default function App() {
       {navOpen && <div className="scrim" onClick={() => setNavOpen(false)} />}
       <aside className={`sidebar ${navOpen ? "open" : ""}`}>
         <div className="brand">
-          <div className="brand-mark">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M4 18 L9 11 L13 14 L20 5" /><circle cx="20" cy="5" r="1.4" fill="#fff" stroke="none" />
+          <div className="brand-mark" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24">
+              <rect x="4" y="13" width="3.6" height="7" rx="1" fill="#fff" />
+              <rect x="10.2" y="9" width="3.6" height="11" rx="1" fill="#fff" />
+              <rect x="16.4" y="5" width="3.6" height="15" rx="1" fill="var(--critical)" />
             </svg>
           </div>
           <div>

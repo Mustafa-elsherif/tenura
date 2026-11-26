@@ -42,6 +42,9 @@ Every number in the product is computed from that data — nothing is mocked.
 - **Bilingual, RTL-ready.** Full **English** and **Arabic** UI with right-to-left
   layout and a one-click language switch — every string is translated, nothing is
   hard-coded.
+- **Responsive to the phone.** A single, deliberate design system that holds from
+  320px up: compact KPI grids, a wrapping toolbar, and data tables that reflow into
+  readable cards on small screens — no clipped columns, no horizontal scroll.
 - **Works live with or without a server.** The dashboard ships with the scored
   dataset bundled and a faithful in-browser replica of the model, so the public demo
   is fully interactive. Point it at the FastAPI backend and it switches to live calls.
@@ -53,6 +56,12 @@ Every number in the product is computed from that data — nothing is mocked.
 | English | العربية (RTL) | AI assistant |
 |:---:|:---:|:---:|
 | ![English](docs/screenshots/overview-en.png) | ![Arabic RTL](docs/screenshots/overview-ar.png) | ![Assistant](docs/screenshots/assistant.png) |
+
+**Mobile** — the same system at 375px: a tight KPI grid and tables that become cards.
+
+| Overview (mobile) | Employee register (mobile) |
+|:---:|:---:|
+| <img src="docs/screenshots/mobile-overview.png" width="260" alt="Mobile overview" /> | <img src="docs/screenshots/mobile-employees.png" width="260" alt="Mobile employee register" /> |
 
 </div>
 

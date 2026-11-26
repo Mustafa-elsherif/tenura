@@ -80,7 +80,7 @@ export default function App() {
       <main className="main">
         <header className="topbar">
           <button className="icon-btn menu-btn" onClick={() => setNavOpen(true)} aria-label={t("a11y.menu")}><IconMenu /></button>
-          <div>
+          <div className="topbar-heading">
             <h1>{t(`title.${tab}.h1`)}</h1>
             <div className="subtitle">{t(`title.${tab}.sub`)}</div>
           </div>

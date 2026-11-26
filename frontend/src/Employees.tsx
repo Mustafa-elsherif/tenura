@@ -56,7 +56,7 @@ export default function Employees() {
 
   return (
     <Card title={t("emp.title")} note={t("emp.note", { n: result.total.toLocaleString() })}>
-      <div className="row" style={{ marginBottom: 14, gap: 10 }}>
+      <div className="row emp-filters" style={{ marginBottom: 14, gap: 10 }}>
         <input className="input" style={{ maxWidth: 240 }} placeholder={t("emp.search")}
           value={search} onChange={(e) => { setSearch(e.target.value); setPage(0); }} aria-label={t("emp.search")} />
         <select className="select" style={{ maxWidth: 190 }} value={dept} onChange={(e) => { setDept(e.target.value); setPage(0); }} aria-label={t("emp.allDepts")}>
@@ -68,15 +68,25 @@ export default function Employees() {
           <option value="Yes">{t("emp.otYes")}</option>
           <option value="No">{t("emp.otNo")}</option>
         </select>
-        <div className="row" style={{ gap: 6 }}>
+        <div className="row chips" style={{ gap: 6 }}>
           {BANDS.map((b) => (
             <button key={b} className={`chip ${bands.has(b) ? "active" : ""}`} onClick={() => toggleBand(b)} aria-pressed={bands.has(b)}>{t(`band.${b}`)}</button>
           ))}
         </div>
       </div>
 
+      {/* Headers collapse into cards on mobile, so sorting moves to an explicit control */}
+      <div className="mobile-sort">
+        <select className="select" value={sortBy} onChange={(e) => { setSortBy(e.target.value); setPage(0); }} aria-label={t("emp.sortBy")}>
+          {COLUMNS.map((c) => <option key={c.key} value={c.key}>{t(c.label)}</option>)}
+        </select>
+        <button className="chip" onClick={() => { setOrder(order === "asc" ? "desc" : "asc"); setPage(0); }} aria-label={t("emp.sortDir")}>
+          {order === "asc" ? "↑" : "↓"}
+        </button>
+      </div>
+
       <div className="table-wrap">
-        <table className="data">
+        <table className="data cards">
           <thead>
             <tr>
               {COLUMNS.map((c) => (
@@ -92,14 +102,14 @@ export default function Employees() {
             {result.items.map((e) => (
               <tr key={e.id} onClick={() => setSelected(e)} tabIndex={0}
                 onKeyDown={(ev) => ev.key === "Enter" && setSelected(e)}>
-                <td className="num">{e.id}</td>
-                <td>{value(e.job_role)}</td>
-                <td>{value(e.department)}</td>
-                <td className="num">{money(e.monthly_income)}</td>
-                <td className="num">{t("drawer.years", { n: e.years_at_company })}</td>
-                <td>{value(e.overtime)}</td>
-                <td className="num" style={{ fontWeight: 700 }}>{pct(e.risk_score)}</td>
-                <td><BandBadge band={e.risk_band} /></td>
+                <td className="num" data-label={t("emp.col.id")}>{e.id}</td>
+                <td data-label={t("emp.col.role")}>{value(e.job_role)}</td>
+                <td data-label={t("emp.col.dept")}>{value(e.department)}</td>
+                <td className="num" data-label={t("emp.col.income")}>{money(e.monthly_income)}</td>
+                <td className="num" data-label={t("emp.col.tenure")}>{t("drawer.years", { n: e.years_at_company })}</td>
+                <td data-label={t("emp.col.ot")}>{value(e.overtime)}</td>
+                <td className="num cell-risk" data-label={t("emp.col.risk")} style={{ fontWeight: 700 }}>{pct(e.risk_score)}</td>
+                <td data-label={t("emp.col.band")}><BandBadge band={e.risk_band} /></td>
               </tr>
             ))}
             {!result.items.length && <tr><td colSpan={8} className="empty">{t("emp.empty")}</td></tr>}

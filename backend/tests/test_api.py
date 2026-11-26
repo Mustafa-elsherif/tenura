@@ -77,6 +77,31 @@ def test_predict_validation_error():
     assert r.status_code == 422
 
 
+def test_chat_grounded_local(monkeypatch):
+    # Force the deterministic local fallback (no external calls).
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    r = client.post("/chat", json={"message": "What is the attrition rate?", "lang": "en"})
+    assert r.status_code == 200
+    body = r.json()
+    assert body["mode"] == "local"
+    assert "%" in body["reply"]
+
+
+def test_chat_arabic_and_scope(monkeypatch):
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    r = client.post("/chat", json={"message": "ما أهم محرّكات ترك العمل؟", "lang": "ar"})
+    assert r.status_code == 200
+    assert len(r.json()["reply"]) > 0
+    # Out-of-scope question returns suggestions to steer back.
+    r2 = client.post("/chat", json={"message": "write me a poem about the ocean", "lang": "en"})
+    assert r2.status_code == 200
+    assert "suggestions" in r2.json()
+
+
+def test_chat_validation():
+    assert client.post("/chat", json={"message": "", "lang": "en"}).status_code == 422
+
+
 def test_predict_batch(tmp_path):
     import pandas as pd
     df = pd.read_csv("../data/WA_Fn-UseC_-HR-Employee-Attrition.csv").head(20)

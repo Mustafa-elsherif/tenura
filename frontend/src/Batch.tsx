@@ -1,5 +1,6 @@
 import { useState } from "react";
 import * as api from "./api";
+import { useI18n } from "./i18n";
 import { Card, BandBadge } from "./ui";
 import { pct } from "./charts";
 import { IconUpload, IconDownload } from "./icons";
@@ -7,6 +8,7 @@ import type { Band } from "./types";
 import type { BatchRow } from "./api";
 
 export default function Batch() {
+  const { t } = useI18n();
   const [rows, setRows] = useState<BatchRow[] | null>(null);
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
@@ -18,7 +20,7 @@ export default function Batch() {
       const res = await api.predictBatch(file);
       setRows(res);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Could not score this file.");
+      setError(e instanceof Error ? e.message : t("batch.err"));
       setRows(null);
     } finally { setBusy(false); }
   };
@@ -29,7 +31,7 @@ export default function Batch() {
       const r = await fetch(`${import.meta.env.BASE_URL}sample_employees.csv`);
       const blob = await r.blob();
       await run(new File([blob], "sample_employees.csv"));
-    } catch { setError("Could not load the sample."); setBusy(false); }
+    } catch { setError(t("batch.err")); setBusy(false); }
   };
 
   const download = () => {
@@ -49,29 +51,29 @@ export default function Batch() {
 
   return (
     <div className="grid" style={{ gap: 18 }}>
-      <Card title="Batch scoring" note="Upload a CSV of employees (IBM HR schema) to score every row at once">
+      <Card title={t("batch.title")} note={t("batch.note")}>
         <label className="card" htmlFor="csv" style={{
           display: "flex", flexDirection: "column", alignItems: "center", gap: 10, padding: 34,
           borderStyle: "dashed", cursor: "pointer", background: "var(--brand-050)", borderColor: "var(--glass-border)",
         }}>
           <div className="kpi-ico v1" style={{ width: 48, height: 48 }}><IconUpload /></div>
-          <div style={{ fontWeight: 650 }}>{busy ? "Scoring…" : "Drop a CSV here or click to browse"}</div>
-          <div className="muted" style={{ fontSize: 12.5 }}>{name || "Scored in your browser — no data leaves this page"}</div>
+          <div style={{ fontWeight: 650 }}>{busy ? t("batch.scoring") : t("batch.drop")}</div>
+          <div className="muted" style={{ fontSize: 12.5 }}>{name || t("batch.privacy")}</div>
           <input id="csv" type="file" accept=".csv" hidden
             onChange={(e) => e.target.files?.[0] && run(e.target.files[0])} />
         </label>
         <div className="row" style={{ marginTop: 14, justifyContent: "space-between" }}>
-          <button className="btn ghost" onClick={loadSample} disabled={busy}>Load demo sample</button>
-          {rows && <button className="btn" onClick={download}><IconDownload size={17} /> Download results</button>}
+          <button className="btn ghost" onClick={loadSample} disabled={busy}>{t("batch.sample")}</button>
+          {rows && <button className="btn" onClick={download}><IconDownload size={17} /> {t("batch.download")}</button>}
         </div>
         {error && <div className="driver-action" style={{ color: "var(--critical)", marginTop: 12 }}>⚠ {error}</div>}
       </Card>
 
       {summary && (
-        <Card title="Scored results" note={`${summary.total.toLocaleString()} employees scored · ${summary.high.toLocaleString()} high or critical risk`}>
+        <Card title={t("batch.results")} note={t("batch.results.note", { n: summary.total.toLocaleString(), h: summary.high.toLocaleString() })}>
           <div className="table-wrap" style={{ maxHeight: 460, overflowY: "auto" }}>
             <table className="data">
-              <thead><tr><th className="num">Employee ID</th><th className="num">Risk score</th><th>Band</th></tr></thead>
+              <thead><tr><th className="num">{t("batch.col.id")}</th><th className="num">{t("batch.col.risk")}</th><th>{t("emp.col.band")}</th></tr></thead>
               <tbody>
                 {rows!.slice(0, 200).map((r) => (
                   <tr key={r.row}>
@@ -83,7 +85,7 @@ export default function Batch() {
               </tbody>
             </table>
           </div>
-          {rows!.length > 200 && <div className="muted" style={{ fontSize: 12, marginTop: 10 }}>Showing the 200 highest-risk rows. Download for the full {rows!.length.toLocaleString()}.</div>}
+          {rows!.length > 200 && <div className="muted" style={{ fontSize: 12, marginTop: 10 }}>{t("batch.showing", { n: rows!.length.toLocaleString() })}</div>}
         </Card>
       )}
     </div>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useI18n } from "./i18n";
 
 type Tip = { x: number; y: number; html: React.ReactNode } | null;
 
@@ -20,6 +21,7 @@ export function RiskByDepartment({
   data: { name: string; avg_risk: number; headcount: number; high_risk: number; actual_attrition: number }[];
 }) {
   const { setTip, node } = useTip();
+  const { t, value } = useI18n();
   const max = Math.max(...data.map((d) => d.avg_risk), 0.01);
   return (
     <div onMouseLeave={() => setTip(null)}>
@@ -31,11 +33,11 @@ export function RiskByDepartment({
               onMouseMove={(e) =>
                 setTip({
                   x: e.clientX, y: e.clientY,
-                  html: (<><b>{d.name}</b><div>Avg risk {pct(d.avg_risk)}</div><div>{d.high_risk} high-risk of {d.headcount}</div><div>Actual attrition {pct(d.actual_attrition)}</div></>),
+                  html: (<><b>{value(d.name)}</b><div>{t("chart.avgRisk", { v: pct(d.avg_risk) })}</div><div>{t("chart.highOf", { h: d.high_risk, n: d.headcount })}</div><div>{t("chart.actual", { v: pct(d.actual_attrition) })}</div></>),
                 })
               }>
               <div className="spread" style={{ marginBottom: 5 }}>
-                <span style={{ fontSize: 13, fontWeight: 600 }}>{d.name}</span>
+                <span style={{ fontSize: 13, fontWeight: 600 }}>{value(d.name)}</span>
                 <span style={{ fontSize: 12.5, color: "var(--text-2)", fontVariantNumeric: "tabular-nums" }}>{pct(d.avg_risk)}</span>
               </div>
               <div style={{ height: 11, borderRadius: 999, background: "var(--grid)", overflow: "hidden" }}>
@@ -57,6 +59,7 @@ const BAND_COLOR: Record<string, string> = {
 /* Donut — parts of whole by status band; legend + center total. */
 export function BandDonut({ data, total }: { data: { name: string; headcount: number }[]; total: number }) {
   const { setTip, node } = useTip();
+  const { t } = useI18n();
   const R = 78, r = 50, C = 2 * Math.PI * ((R + r) / 2), sw = R - r;
   let acc = 0;
   const sum = data.reduce((s, d) => s + d.headcount, 0) || 1;
@@ -72,7 +75,7 @@ export function BandDonut({ data, total }: { data: { name: string; headcount: nu
                 stroke={BAND_COLOR[d.name]} strokeWidth={sw}
                 strokeDasharray={`${len} ${C - len}`} strokeDashoffset={-acc}
                 style={{ transition: "stroke-width .15s" }}
-                onMouseMove={(e) => setTip({ x: e.clientX, y: e.clientY, html: (<><b>{d.name}</b><div>{d.headcount} employees ({pct(d.headcount / sum)})</div></>) })}
+                onMouseMove={(e) => setTip({ x: e.clientX, y: e.clientY, html: (<><b>{t(`band.${d.name}`)}</b><div>{d.headcount} · {pct(d.headcount / sum)}</div></>) })}
               />
             );
             acc += len;
@@ -80,12 +83,12 @@ export function BandDonut({ data, total }: { data: { name: string; headcount: nu
           })}
         </g>
         <text x="90" y="84" textAnchor="middle" style={{ fontSize: 30, fontWeight: 780, fill: "var(--text)" }}>{total.toLocaleString()}</text>
-        <text x="90" y="104" textAnchor="middle" style={{ fontSize: 12, fill: "var(--text-3)" }}>employees</text>
+        <text x="90" y="104" textAnchor="middle" style={{ fontSize: 12, fill: "var(--text-3)" }}>{t("chart.employees")}</text>
       </svg>
       <div className="stacklist" style={{ gap: 9 }}>
         {data.map((d) => (
           <div key={d.name} className="spread" style={{ gap: 16, minWidth: 150 }}>
-            <span style={{ fontSize: 13 }}><span className="sw" style={{ background: BAND_COLOR[d.name] }} />{d.name}</span>
+            <span style={{ fontSize: 13 }}><span className="sw" style={{ background: BAND_COLOR[d.name] }} />{t(`band.${d.name}`)}</span>
             <span style={{ fontSize: 13, fontWeight: 650, fontVariantNumeric: "tabular-nums" }}>{d.headcount}</span>
           </div>
         ))}
@@ -96,17 +99,18 @@ export function BandDonut({ data, total }: { data: { name: string; headcount: nu
 }
 
 /* Global driver importance — horizontal magnitude bars, sequential hue. */
-export function DriverBars({ data, maxItems = 8 }: { data: { label: string; importance: number }[]; maxItems?: number }) {
+export function DriverBars({ data, maxItems = 8 }: { data: { feature: string; label: string; importance: number }[]; maxItems?: number }) {
   const { setTip, node } = useTip();
+  const { t, feature } = useI18n();
   const items = data.slice(0, maxItems);
   const max = Math.max(...items.map((d) => d.importance), 0.001);
   return (
     <div className="stacklist" style={{ gap: 12 }} onMouseLeave={() => setTip(null)}>
       {items.map((d) => (
         <div key={d.label}
-          onMouseMove={(e) => setTip({ x: e.clientX, y: e.clientY, html: (<><b>{d.label}</b><div>Mean |SHAP| {d.importance.toFixed(3)}</div></>) })}>
+          onMouseMove={(e) => setTip({ x: e.clientX, y: e.clientY, html: (<><b>{feature(d.feature)}</b><div>{t("chart.shap", { v: d.importance.toFixed(3) })}</div></>) })}>
           <div className="spread" style={{ marginBottom: 4 }}>
-            <span style={{ fontSize: 12.5, fontWeight: 550 }}>{d.label}</span>
+            <span style={{ fontSize: 12.5, fontWeight: 550 }}>{feature(d.feature)}</span>
           </div>
           <div style={{ height: 9, borderRadius: 999, background: "var(--grid)", overflow: "hidden" }}>
             <span style={{ display: "block", height: "100%", width: `${(d.importance / max) * 100}%`, minWidth: 6, borderRadius: 999, background: "linear-gradient(90deg,var(--series-2),var(--series-1))" }} />

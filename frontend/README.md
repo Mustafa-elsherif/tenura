@@ -39,5 +39,19 @@ python ../infra/sync_artifacts.py
 | `src/Overview.tsx` · `Employees.tsx` · `Drivers.tsx` · `Predict.tsx` · `Batch.tsx` | The five views |
 | `src/charts.tsx` | Accessible SVG charts (bars, donut, driver bars) with hover tooltips |
 | `src/scorer.ts` | In-browser replica of the trained model |
-| `src/api.ts` | Data layer — bundled vs. live API, CSV parsing/scoring |
-| `src/theme.css` | The design system (tokens, glass surfaces, components) |
+| `src/api.ts` | Data layer — bundled vs. live API, CSV parsing/scoring, chat routing |
+| `src/i18n.tsx` | English + Arabic strings, RTL, driver/label/action localization |
+| `src/Chat.tsx` · `assistant.ts` | AI assistant UI + grounded in-browser retrieval engine |
+| `src/theme.css` | The design system (tokens, glass surfaces, RTL logical properties) |
+
+## Internationalisation & RTL
+The app is fully bilingual (English / Arabic). The language switch in the header sets
+`dir="rtl"` on `<html>` for Arabic; layout uses CSS logical properties so it mirrors
+cleanly. Every string — nav, charts, tables, driver names, retention actions and the
+assistant — comes from `src/i18n.tsx`; nothing is hard-coded.
+
+## AI assistant
+`Chat.tsx` renders the assistant. When a live backend is configured it calls `POST
+/chat` (Google Gemini, key server-side only); otherwise it answers from `assistant.ts`,
+a deterministic engine grounded in the bundled data. Both reply in the current UI
+language and stay strictly in scope.

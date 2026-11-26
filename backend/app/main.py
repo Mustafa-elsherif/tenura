@@ -2,15 +2,21 @@
 from __future__ import annotations
 
 import io
+import os
 from typing import Optional
 
 import pandas as pd
+from dotenv import load_dotenv
 from fastapi import FastAPI, File, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
+# Load .env (GEMINI_API_KEY etc.) — never committed; key stays server-side.
+load_dotenv()
+
 from .artifacts import get_store, risk_band
+from .chat import chat as run_chat
 from .features import ALL_FEATURES, engineer_features
-from .schemas import EmployeeInput, PredictResponse
+from .schemas import ChatRequest, EmployeeInput, PredictResponse
 
 app = FastAPI(
     title="Tenura API",
@@ -38,7 +44,12 @@ SORT_FIELDS = {
 @app.get("/health", tags=["system"])
 def health():
     store = get_store()
-    return {"status": "ok", "model": store.metrics["selected_model"], "employees": len(store.employees)}
+    return {
+        "status": "ok",
+        "model": store.metrics["selected_model"],
+        "employees": len(store.employees),
+        "assistant": "gemini" if os.environ.get("GEMINI_API_KEY", "").strip() else "local",
+    }
 
 
 @app.get("/metrics", tags=["model"])
@@ -144,6 +155,12 @@ async def predict_batch(file: UploadFile = File(...)):
         )
     results.sort(key=lambda r: r["risk_score"], reverse=True)
     return {"count": len(results), "results": results}
+
+
+@app.post("/chat", tags=["assistant"])
+async def chat(req: ChatRequest):
+    history = [{"role": t.role, "content": t.content} for t in req.history]
+    return await run_chat(req.message, req.lang, history, get_store())
 
 
 @app.get("/", include_in_schema=False)

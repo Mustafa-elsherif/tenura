@@ -1,33 +1,35 @@
 import { useEffect, useMemo, useState } from "react";
 import * as api from "./api";
+import { useI18n } from "./i18n";
 import { Card, RiskMeter, DriverList } from "./ui";
 import type { PredictResult } from "./types";
 
-type FieldNum = { kind: "num"; key: string; label: string; min: number; max: number; step?: number; hint?: string };
-type FieldCat = { kind: "cat"; key: string; label: string; options: string[] };
+type FieldNum = { kind: "num"; key: string; min: number; max: number; step?: number };
+type FieldCat = { kind: "cat"; key: string; options: string[] };
 type Field = FieldNum | FieldCat;
 
 export default function Predict() {
+  const { t, value } = useI18n();
   const model = api.clientModel();
   const cats = useMemo(() => Object.fromEntries(model.categorical.map((c) => [c.feature, c.categories])), [model]);
 
   const fields: Field[] = [
-    { kind: "cat", key: "OverTime", label: "Works overtime", options: cats.OverTime },
-    { kind: "num", key: "MonthlyIncome", label: "Monthly income ($)", min: 1000, max: 20000, step: 100 },
-    { kind: "num", key: "Age", label: "Age", min: 18, max: 60 },
-    { kind: "num", key: "JobLevel", label: "Job level", min: 1, max: 5 },
-    { kind: "num", key: "JobSatisfaction", label: "Job satisfaction (1–4)", min: 1, max: 4 },
-    { kind: "num", key: "EnvironmentSatisfaction", label: "Environment satisfaction (1–4)", min: 1, max: 4 },
-    { kind: "num", key: "WorkLifeBalance", label: "Work-life balance (1–4)", min: 1, max: 4 },
-    { kind: "num", key: "YearsAtCompany", label: "Years at company", min: 0, max: 40 },
-    { kind: "num", key: "YearsSinceLastPromotion", label: "Years since promotion", min: 0, max: 15 },
-    { kind: "num", key: "YearsWithCurrManager", label: "Years with manager", min: 0, max: 17 },
-    { kind: "num", key: "StockOptionLevel", label: "Stock option level", min: 0, max: 3 },
-    { kind: "num", key: "DistanceFromHome", label: "Commute distance (km)", min: 1, max: 29 },
-    { kind: "cat", key: "BusinessTravel", label: "Business travel", options: cats.BusinessTravel },
-    { kind: "cat", key: "Department", label: "Department", options: cats.Department },
-    { kind: "cat", key: "JobRole", label: "Job role", options: cats.JobRole },
-    { kind: "cat", key: "MaritalStatus", label: "Marital status", options: cats.MaritalStatus },
+    { kind: "cat", key: "OverTime", options: cats.OverTime },
+    { kind: "num", key: "MonthlyIncome", min: 1000, max: 20000, step: 100 },
+    { kind: "num", key: "Age", min: 18, max: 60 },
+    { kind: "num", key: "JobLevel", min: 1, max: 5 },
+    { kind: "num", key: "JobSatisfaction", min: 1, max: 4 },
+    { kind: "num", key: "EnvironmentSatisfaction", min: 1, max: 4 },
+    { kind: "num", key: "WorkLifeBalance", min: 1, max: 4 },
+    { kind: "num", key: "YearsAtCompany", min: 0, max: 40 },
+    { kind: "num", key: "YearsSinceLastPromotion", min: 0, max: 15 },
+    { kind: "num", key: "YearsWithCurrManager", min: 0, max: 17 },
+    { kind: "num", key: "StockOptionLevel", min: 0, max: 3 },
+    { kind: "num", key: "DistanceFromHome", min: 1, max: 29 },
+    { kind: "cat", key: "BusinessTravel", options: cats.BusinessTravel },
+    { kind: "cat", key: "Department", options: cats.Department },
+    { kind: "cat", key: "JobRole", options: cats.JobRole },
+    { kind: "cat", key: "MaritalStatus", options: cats.MaritalStatus },
   ];
 
   const [form, setForm] = useState<Record<string, number | string>>(() => {
@@ -58,18 +60,18 @@ export default function Predict() {
 
   return (
     <div className="grid cols-2" style={{ alignItems: "start" }}>
-      <Card title="What-if predictor" note="Adjust an employee profile and see risk update live — powered by the real trained model"
+      <Card title={t("pred.title")} note={t("pred.note")}
         right={<div className="row" style={{ gap: 6 }}>
-          <button className="chip" onClick={presetHighRisk}>High-risk example</button>
-          <button className="chip" onClick={presetReset}>Reset</button>
+          <button className="chip" onClick={presetHighRisk}>{t("pred.high")}</button>
+          <button className="chip" onClick={presetReset}>{t("pred.reset")}</button>
         </div>}>
         <div className="grid" style={{ gridTemplateColumns: "1fr 1fr", gap: 14 }}>
           {fields.map((f) => (
             <div className="field" key={f.key}>
-              <label htmlFor={f.key}>{f.label}</label>
+              <label htmlFor={f.key}>{t(`f.${f.key}`)}</label>
               {f.kind === "cat" ? (
                 <select id={f.key} className="select" value={String(form[f.key])} onChange={(e) => set(f.key, e.target.value)}>
-                  {f.options.map((o) => <option key={o} value={o}>{o.replace(/_/g, " ")}</option>)}
+                  {f.options.map((o) => <option key={o} value={o}>{value(o)}</option>)}
                 </select>
               ) : (
                 <input id={f.key} className="input" type="number" min={f.min} max={f.max} step={f.step ?? 1}
@@ -81,10 +83,10 @@ export default function Predict() {
       </Card>
 
       <div className="grid" style={{ gap: 18, position: "sticky", top: 20 }}>
-        <Card title="Predicted risk">
+        <Card title={t("pred.result")}>
           {result ? <RiskMeter score={result.risk_score} band={result.risk_band} /> : <div className="skeleton" style={{ height: 80 }} />}
         </Card>
-        <Card title="Top drivers for this profile" note="Why the model scored it this way">
+        <Card title={t("pred.drivers")} note={t("pred.drivers.note")}>
           {result ? <DriverList drivers={result.top_drivers} /> : <div className="skeleton" style={{ height: 160 }} />}
         </Card>
       </div>

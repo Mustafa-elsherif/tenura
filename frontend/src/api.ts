@@ -45,6 +45,20 @@ export async function init(): Promise<{ live: boolean }> {
 }
 
 export const dataSource = () => (_live ? "Live API" : "Bundled dataset");
+export const isLive = () => _live;
+
+export interface ChatTurn { role: "user" | "assistant"; content: string; }
+export interface ChatResponse { reply: string; suggestions?: { label: string; query: string }[]; mode?: string; }
+
+export async function chatRemote(message: string, lang: string, history: ChatTurn[]): Promise<ChatResponse> {
+  const r = await fetch(`${API}/chat`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message, lang, history }),
+  });
+  if (!r.ok) throw new Error("chat failed");
+  return r.json();
+}
 export const metrics = () => _metrics!;
 export const segments = () => _segments!;
 export const drivers = () => _drivers!;

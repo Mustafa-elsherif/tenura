@@ -7,9 +7,9 @@
 Predict who is likely to leave, understand **why**, and act before they do — a
 trained ML model, a documented REST API, and a modern analytics dashboard.
 
-**[▶ Live dashboard](https://mustafa-elsherif.github.io/tenura/)** · [API](#api-reference) · [Run locally](#run-locally)
+**[▶ Live dashboard](https://mustafa-elsherif.github.io/tenura/)** · [API](#api-reference) · [AI assistant](#ai-assistant) · [Run locally](#run-locally)
 
-![Tenura dashboard](docs/screenshots/overview-dark.png)
+![Tenura dashboard](docs/screenshots/overview-en.png)
 
 </div>
 
@@ -21,7 +21,8 @@ Tenura turns a flat HR dataset into a decision tool. It scores every employee's
 attrition risk, bands them (Low → Critical), explains each score with the factors
 driving it, and recommends a concrete retention action. HR leaders get an overview;
 managers get a register they can filter and drill into; analysts get a what-if
-predictor and batch scoring.
+predictor and batch scoring — and an **AI assistant** that answers questions grounded
+in the real data.
 
 Built on the **IBM HR Employee Attrition** dataset (1,470 employees, 35 fields).
 Every number in the product is computed from that data — nothing is mocked.
@@ -35,11 +36,25 @@ Every number in the product is computed from that data — nothing is mocked.
 - **Explainable by design.** SHAP global importances and per-employee top drivers,
   with one-hot features aggregated back to readable names and mapped to retention
   actions.
+- **Grounded AI assistant.** A chat assistant (Google Gemini on the backend, with a
+  free grounded-retrieval fallback) that answers only from the real workforce data,
+  never invents numbers, and replies in the user's language.
+- **Bilingual, RTL-ready.** Full **English** and **Arabic** UI with right-to-left
+  layout and a one-click language switch — every string is translated, nothing is
+  hard-coded.
 - **Works live with or without a server.** The dashboard ships with the scored
   dataset bundled and a faithful in-browser replica of the model, so the public demo
   is fully interactive. Point it at the FastAPI backend and it switches to live calls.
 - **Production shape.** Typed API with OpenAPI docs, tests, Docker for the whole
   stack, and CI/CD to GitHub Pages.
+
+<div align="center">
+
+| English | العربية (RTL) | AI assistant |
+|:---:|:---:|:---:|
+| ![English](docs/screenshots/overview-en.png) | ![Arabic RTL](docs/screenshots/overview-ar.png) | ![Assistant](docs/screenshots/assistant.png) |
+
+</div>
 
 ## Model performance
 
@@ -112,6 +127,7 @@ Interactive OpenAPI docs at `/docs`. Core endpoints:
 | GET | `/employees/{id}` | One employee with risk score, band and top drivers |
 | POST | `/predict` | What-if: score a single employee record + live SHAP drivers |
 | POST | `/predict/batch` | Upload a CSV, score every row, return ranked results |
+| POST | `/chat` | Grounded assistant — `{message, lang, history}` → grounded reply |
 | GET | `/drivers` | Global SHAP importances |
 | GET | `/segments` | Aggregates by department, role, band, overtime, travel |
 
@@ -120,6 +136,33 @@ curl -X POST http://localhost:8000/predict \
   -H "Content-Type: application/json" \
   -d '{"OverTime":"Yes","MonthlyIncome":2400,"JobSatisfaction":1,"WorkLifeBalance":1}'
 ```
+
+## AI assistant
+
+The dashboard has a built-in chat assistant ("Atlas") that answers questions
+**strictly grounded** in the live workforce data — attrition, drivers, departments,
+roles, model metrics and individual employees. It never invents numbers, declines
+out-of-scope questions, and replies in the user's language (Arabic UI → Arabic).
+
+- **Provider:** Google Gemini, called **only from the backend** — the API key never
+  reaches the browser.
+- **Fallback:** if `GEMINI_API_KEY` is absent or Gemini is unavailable, the assistant
+  uses a free deterministic retrieval engine over the same data, so it always works.
+  The public demo (no backend) runs this engine **in the browser**.
+
+### Set the key
+```bash
+cp .env.example .env
+# edit .env:
+GEMINI_API_KEY=your_key_here      # from https://aistudio.google.com/apikey
+```
+`.env` is git-ignored — the key is never committed. `docker compose up` passes it to
+the backend automatically; nothing else is needed.
+
+## Internationalisation
+The UI ships in **English** and **Arabic** with full right-to-left layout. Switch with
+the EN / عربي toggle in the header; the choice persists. All strings — including
+driver names, retention actions and the assistant — are translated via `src/i18n.tsx`.
 
 ## Deployment
 

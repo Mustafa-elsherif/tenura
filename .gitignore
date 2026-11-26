@@ -13,6 +13,7 @@ frontend/.vite/
 # Env & secrets
 .env
 .env.*
+!.env.example
 
 # OS
 .DS_Store
@@ -22,3 +23,6 @@ Thumbs.db
 .tools/
 .artifacts/
 wa-build.log
+
+# TS build info
+*.tsbuildinfo

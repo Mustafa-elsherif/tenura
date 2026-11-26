@@ -11,6 +11,9 @@ services:
       - "8000:8000"
     environment:
       - PORT=8000
+      # Read from the host shell or the project .env (git-ignored). The key is
+      # never baked into the image and never reaches the frontend.
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/health').status==200 else 1)"]
       interval: 10s

@@ -8,3 +8,5 @@ scikit-learn==1.9.1
 xgboost==3.4.1
 shap==0.54.1
 joblib==1.6.0
+httpx==0.28.1
+python-dotenv==1.0.1

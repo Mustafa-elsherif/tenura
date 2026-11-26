@@ -30,6 +30,12 @@ non-interactively during this build). Pick either option; both are one action:
 Follow `infra/spaces/README.md` (copy `infra/spaces/Dockerfile` to the Space root and
 push). The API serves on port 7860.
 
+> **Note (Nov 2026):** Hugging Face now requires a **PRO** subscription to run
+> Gradio/Docker Spaces on free `cpu-basic` hardware — only *static* Spaces remain
+> free, and a static Space cannot run this FastAPI/Gemini backend. Creating a Docker
+> Space on a non-PRO account returns `402 Payment Required`. Use Option A (Render)
+> for a no-cost backend, or upgrade the HF account to PRO to use this option.
+
 ### Enable the Gemini-powered assistant (optional)
 Set `GEMINI_API_KEY` on the host (Render: service → Environment; Spaces: Settings →
 Secrets). Without it the assistant automatically uses the free grounded-retrieval

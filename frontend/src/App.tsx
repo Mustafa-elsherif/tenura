@@ -57,13 +57,13 @@ export default function App() {
       <aside className={`sidebar ${navOpen ? "open" : ""}`}>
         <div className="brand">
           <div className="brand-mark" aria-hidden="true">
-            <svg width="20" height="20" viewBox="0 0 24 24">
-              <rect x="4" y="13" width="3.6" height="7" rx="1" fill="#fff" />
-              <rect x="10.2" y="9" width="3.6" height="11" rx="1" fill="#fff" />
-              <rect x="16.4" y="5" width="3.6" height="15" rx="1" fill="var(--critical)" />
+            <svg width="23" height="23" viewBox="0 0 32 32">
+              <rect x="6" y="10" width="20" height="3.6" rx="1.3" fill="var(--on-accent)" />
+              <rect x="14.2" y="10" width="3.6" height="14.6" rx="1.3" fill="var(--on-accent)" />
+              <circle cx="25" cy="6.2" r="2.6" fill="var(--critical)" />
             </svg>
           </div>
-          <div>
+          <div className="brand-text">
             <div className="brand-name">Tenura</div>
             <div className="brand-sub">{t("brand.sub")}</div>
           </div>
@@ -76,7 +76,10 @@ export default function App() {
             </button>
           ))}
         </nav>
-        <div className="sidebar-foot">{t("sidebar.foot")}</div>
+        <div className="sidebar-foot">
+          <span className="foot-label">{t("sidebar.foot.label")}</span>
+          <span className="foot-text">{t("sidebar.foot")}</span>
+        </div>
       </aside>
 
       <main className="main">

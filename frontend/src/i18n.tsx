@@ -13,7 +13,8 @@ const DICT: Record<Lang, Record<string, string>> = {
     "nav.predict": "What-if predictor",
     "nav.batch": "Batch scoring",
     "nav.assistant": "AI assistant",
-    "sidebar.foot": "Predictive attrition & retention analytics, built on the IBM HR dataset.",
+    "sidebar.foot.label": "About the data",
+    "sidebar.foot": "Attrition & retention analytics, trained on the IBM HR dataset.",
 
     "title.overview.h1": "Workforce overview",
     "title.overview.sub": "Attrition risk across the organisation at a glance",
@@ -190,7 +191,8 @@ const DICT: Record<Lang, Record<string, string>> = {
     "nav.predict": "مُتنبّئ الاحتمالات",
     "nav.batch": "التقييم الجماعي",
     "nav.assistant": "المساعد الذكي",
-    "sidebar.foot": "تحليلات تنبؤية لترك العمل والاحتفاظ بالموظفين، مبنية على بيانات IBM للموارد البشرية.",
+    "sidebar.foot.label": "عن البيانات",
+    "sidebar.foot": "تحليلات لترك العمل والاحتفاظ بالموظفين، مدرَّبة على بيانات IBM للموارد البشرية.",
 
     "title.overview.h1": "نظرة عامة على القوى العاملة",
     "title.overview.sub": "مخاطر ترك العمل عبر المؤسسة في لمحة",
